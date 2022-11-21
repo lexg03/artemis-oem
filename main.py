@@ -42,12 +42,12 @@ steps_f = 2
 steps_b = 2
 
 # Timestep interval
-timestep = datetime.timedelta(minutes=30)
+timestep = datetime.timedelta(seconds=1)
 
 # Steps forward
 logging.debug("--------- RUNNING FORWARD STEPS ---------")
 for step_index in range(0, steps_f):
-    utcstep = (datetime.datetime.now(datetime.timezone.utc) - (step_index * timestep) ).strftime('%Y-%m-%dT%H:%M:%S')
+    utcstep = (datetime.datetime.now(datetime.timezone.utc) + (step_index * timestep) ).strftime('%Y-%m-%dT%H:%M:%S')
     # https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/spkgeo_c.html
     ([x,y, z, vx, vy, vz], light_time) = spice.spkgeo(
         targ=23, 
@@ -55,6 +55,7 @@ for step_index in range(0, steps_f):
         ref='J2000', 
         obs=399
     )
+    logging.debug('Current UTC time %s', utcstep)
     logging.debug("Position (km): (%17.5f, %17.5f, %17.5f)", x, y, z)
     logging.debug("Vector (km/s): (%17.5f, %17.5f, %17.5f)", vx, vy, vz)
     logging.debug("Light time (s): %18.13f", light_time)
@@ -70,6 +71,7 @@ for step_index in range(0, steps_b):
         ref='J2000', 
         obs=399
     )
+    logging.debug('Current UTC time %s', utcstep)
     logging.debug("Position (km): (%17.5f, %17.5f, %17.5f)", x, y, z)
     logging.debug("Vector (km/s): (%17.5f, %17.5f, %17.5f)", vx, vy, vz)
     logging.debug("Light time (s): %18.13f", light_time)
